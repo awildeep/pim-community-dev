@@ -13,12 +13,18 @@ use Pim\Bundle\ImportExportBundle\Processor\ProductCsvSerializerProcessor;
  */
 class ProductCsvSerializerProcessorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->serializer   = $this->getSerializerMock();
         $this->processor    = new ProductCsvSerializerProcessor($this->serializer);
     }
 
+    /**
+     * Test related method
+     */
     public function testInstanceOfHeterogeneousCsvSerializerProcessor()
     {
         $this->assertInstanceOf(
@@ -27,6 +33,9 @@ class ProductCsvSerializerProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Test related method
+     */
     public function testStoresMediaAmongWithSerializedProducts()
     {
         $this->processor->setDelimiter(';');
@@ -43,13 +52,6 @@ class ProductCsvSerializerProcessorTest extends \PHPUnit_Framework_TestCase
         $board = $this->getProductMock(array($media1, $media2));
         $sail  = $this->getProductMock(array($media3));
         $mast  = $this->getProductMock(array($media4, $media5, $media6));
-
-        $context = array(
-            'delimiter'     => ';',
-            'enclosure'     => '"',
-            'withHeader'    => true,
-            'heterogeneous' => true,
-        );
 
         $this->serializer
             ->expects($this->once())
@@ -85,6 +87,8 @@ class ProductCsvSerializerProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $media
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
     protected function getProductMock(array $media)

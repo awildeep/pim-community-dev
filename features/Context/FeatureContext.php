@@ -6,8 +6,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Parser;
 use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\MinkExtension\Context\MinkContext;
+use Behat\Behat\Exception\BehaviorException;
 use Behat\Mink\Exception\ExpectationException;
-use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 /**
  * Main feature context
@@ -39,6 +39,7 @@ class FeatureContext extends MinkContext implements KernelAwareInterface
         $this->useContext('command', new CommandContext());
         $this->useContext('navigation', new NavigationContext());
         $this->useContext('transformations', new TransformationContext());
+        $this->useContext('assertions', new AssertionContext());
     }
 
     /**
@@ -129,9 +130,18 @@ class FeatureContext extends MinkContext implements KernelAwareInterface
      *
      * @param integer $time
      * @param string  $condition
+     *
+     * @throws BehaviorException If timeout is reached
      */
-    public function wait($time = 5000, $condition = null)
+    public function wait($time = 10000, $condition = null)
     {
+        if (!$this->getSession()->getDriver() instanceof \Behat\Mink\Driver\Selenium2Driver) {
+            return;
+        }
+
+        $start = microtime(true);
+        $end = $start + $time / 1000.0;
+
         $condition = $condition !== null ? $condition : <<<JS
         document.readyState == 'complete'                  // Page is ready
             && typeof $ != 'undefined'                     // jQuery is loaded
@@ -141,10 +151,14 @@ class FeatureContext extends MinkContext implements KernelAwareInterface
             && $('.jstree-loading').length == 0;           // Jstree has finished loading
 JS;
 
-        try {
-            $this->getSession()->wait(100, false);
-            $this->getSession()->wait($time, $condition);
-        } catch (UnsupportedDriverActionException $e) {
+        // Make sure the AJAX calls are fired up before checking the condition
+        $this->getSession()->wait(100, false);
+
+        $this->getSession()->wait($time, $condition);
+
+        // Check if we reached the timeout unless the condition is false to explicitly wait the specified time
+        if ($condition !== false && microtime(true) > $end) {
+            throw new BehaviorException(sprintf('Timeout of %d reached when checking on %s', $time, $condition));
         }
     }
 

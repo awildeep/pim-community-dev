@@ -29,6 +29,7 @@ Feature: Execute a job
     And the following job:
       | connector            | alias          | code                | label                       | type   |
       | Akeneo CSV Connector | product_import | acme_product_import | Product import for Acme.com | import |
+    And I am logged in as "Julia"
 
   Scenario: Successfully import a csv file of products
     Given the following file to import:
@@ -56,9 +57,9 @@ Feature: Execute a job
       | processor | categories column | categories           |
       | processor | family column     | families             |
       | processor | groups column     | groups               |
-    And I am logged in as "Julia"
     When I am on the "acme_product_import" import job page
     And I launch the import job
+    And I wait for the job to finish
     Then there should be 10 products
     And the family of the product "SKU-006" should be "Bag"
     And product "SKU-007" should be enabled
@@ -85,9 +86,9 @@ Feature: Execute a job
       | processor | categories column | categories           |
       | processor | family column     | families             |
       | processor | groups column     | groups               |
-    And I am logged in as "Julia"
     When I am on the "acme_product_import" import job page
     And I launch the import job
+    And I wait for the job to finish
     Then I should see "The \"sku\" attribute is unique, the value \"SKU-001\" was already read in this file"
     Then there should be 1 product
     And the product "SKU-001" should have the following values:
@@ -115,9 +116,9 @@ Feature: Execute a job
       | processor | categories column | categories           |
       | processor | family column     | families             |
       | processor | groups column     | groups               |
-    And I am logged in as "Julia"
     When I am on the "acme_product_import" import job page
     And I launch the import job
+    And I wait for the job to finish
     Then there should be 1 product
     And the product "SKU-001" should have the following values:
       | name        | Donec                                                             |
@@ -149,7 +150,6 @@ Feature: Execute a job
       | processor | categories column | categories |
       | processor | family column     | families   |
       | processor | groups column     | groups     |
-    And I am logged in as "Julia"
     When I am on the "acme_product_import" import job page
     And I upload and import the file "{{ file to import }}"
     Then there should be 10 products
@@ -176,9 +176,9 @@ Feature: Execute a job
       | processor | categories column | categories           |
       | processor | family column     | families             |
       | processor | groups column     | groups               |
-    And I am logged in as "Julia"
     When I am on the "acme_product_import" import job page
     And I launch the import job
+    And I wait for the job to finish
     Then there should be 2 products
     And the product "SKU-001" should have the following value:
       | prices | 100.00 EUR, 90.00 USD |
@@ -209,9 +209,9 @@ Feature: Execute a job
       | processor | categories column | categories           |
       | processor | family column     | families             |
       | processor | groups column     | groups               |
-    And I am logged in as "Julia"
     When I am on the "acme_product_import" import job page
     And I launch the import job
+    And I wait for the job to finish
     Then there should be 1 products
     And the product "SKU-001" should have the following value:
       | prices | 100.00 EUR, 90.00 USD |

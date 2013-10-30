@@ -9,7 +9,6 @@ use Oro\Bundle\BatchBundle\Item\ItemProcessorInterface;
 use Oro\Bundle\BatchBundle\Item\AbstractConfigurableStepElement;
 use Oro\Bundle\BatchBundle\Step\StepExecutionAwareInterface;
 use Oro\Bundle\BatchBundle\Entity\StepExecution;
-use Pim\Bundle\ImportExportBundle\Exception\InvalidObjectException;
 use Pim\Bundle\CatalogBundle\Entity\Category;
 
 /**
@@ -154,8 +153,6 @@ class ValidCategoryCreationProcessor extends AbstractConfigurableStepElement imp
      * If the category is valid, it is stored into the categories property
      *
      * @param array $item
-     *
-     * @throws InvalidObjectException when validation errors are present
      */
     private function processItem($item)
     {
